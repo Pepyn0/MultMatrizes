@@ -22,9 +22,40 @@ class ClientUDP(object):
         message_from_server = self.client_socket_udp.recvfrom(BUFFERSIZE)
         return message_from_server[0].decode()
 
+class ReadFile(object):
+    """ ReadFile """
+
+    def read(self, name: str) -> tuple[list, list]:
+        """ read """
+        matrix = []
+        matrix2 = []
+        flag = True
+        with open(name, 'r', encoding="utf-8") as file:
+            flag2 = True
+            while flag2:
+                text = file.readline()
+                text = text.strip('\n')
+                if not text:
+                    flag2 = False
+                elif text == '*':
+                    flag = False
+                elif flag:
+                    text = text.split(',')
+                    text = list(map(int, text))
+                    matrix.append(text)
+                elif not flag:
+                    text = text.split(',')
+                    text = list(map(int, text))
+                    matrix2.append(text)
+
+
+        return (matrix, matrix2)
+
 
 if __name__ == '__main__':
+    f = ReadFile()
+    matrices = f.read("input.txt")
     client = ClientUDP()
-    MESSAGE = 'eco'
+    MESSAGE = f'{matrices}'
     result = client.send(MESSAGE)
     print(result)
