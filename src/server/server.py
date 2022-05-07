@@ -1,7 +1,7 @@
 """ Main Server """
 
 import socket
-# import threading
+import threading
 
 
 BUFFERSIZE = 1024
@@ -59,19 +59,41 @@ class ClientTCP(object):
         self.conn.sendall(message)
 
 
-class Connection():
+class Connection(threading.Thread):
     """ Connection """
+
+    def __init__(self, server, server_aux, byte_addr) -> None:
+        threading.Thread.__init__(self)
+        self.server = server
+        self.server_aux = server_aux
+        self.tuple = byte_addr
+
+    def communication(self) -> bool:
+        """ communication """
+
+        running = True
+
+        data, addr = self.tuple
+
+        if not data:
+            running = False
+        else:
+            self.server_aux.send(data)
+            data = self.server_aux.recv()
+            self.server.send(data, addr)
+            running = False
+
+        return running
+
+    def run(self) -> None:
+        while self.communication() is not False:
+            pass
 
 
 if __name__ == '__main__':
-    server = ServerUDP()
-    serverAux = ClientTCP()
-
+    s = ServerUDP()
+    s_aux = ClientTCP()
     while True:
-        bytes_socket_pair = server.recev()
-
-        serverAux.send(bytes_socket_pair[0])
-        data = serverAux.recv()
-        # Tratamento
-
-        server.send(data, bytes_socket_pair[1])
+        bytes_socket_pair = s.recev()
+        new_thread = Connection(s, s_aux, bytes_socket_pair)
+        new_thread.start()
