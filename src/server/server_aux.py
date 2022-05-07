@@ -20,10 +20,12 @@ with socket.socket(family=socket.AF_INET, type=socket.SOCK_STREAM) as s:
         print(f"Connected by {addr}")
         while True:
             data = conn.recv(BUFFERSIZE)
+
+
             print("Client:", addr,
                   " Message: ", data.decode())
             if not data:
                 break
-
-            # Processamento
-            conn.sendall(data)
+            else:
+                # Processamento
+                conn.send(data)

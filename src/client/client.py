@@ -25,6 +25,6 @@ class ClientUDP(object):
 
 if __name__ == '__main__':
     client = ClientUDP()
-    MESSAGE = 'batatinha'
+    MESSAGE = 'eco'
     result = client.send(MESSAGE)
     print(result)
