@@ -2,10 +2,14 @@
 
 import socket
 import threading
+# from time import sleep
+
+from matrix import Matrix, treatment
 
 
 BUFFERSIZE = 1024
 # Server
+MAX_REQUISITIONS = 2
 UDP_IP_ADDRESS = '127.0.0.1'
 UDP_PORT_NO = 6789
 INPUT_ADDR = (UDP_IP_ADDRESS, UDP_PORT_NO)
@@ -62,14 +66,15 @@ class ClientTCP(object):
 class Connection(threading.Thread):
     """ Connection """
 
-    def __init__(self, server, server_aux, byte_addr) -> None:
+    def __init__(self, server, byte_addr, flag=False) -> None:
         threading.Thread.__init__(self)
         self.server = server
-        self.server_aux = server_aux
         self.tuple = byte_addr
+        self.flag = flag
 
     def communication(self) -> bool:
         """ communication """
+        global count_requisitions
 
         running = True
 
@@ -77,10 +82,18 @@ class Connection(threading.Thread):
 
         if not data:
             running = False
-        else:
-            self.server_aux.send(data)
-            data = self.server_aux.recv()
+        elif self.flag:
             self.server.send(data, addr)
+            running = False
+        else:
+            # sleep(10)
+            input_matrix1, input_matrix2 = treatment(data)
+            m1 = Matrix(input_matrix1)
+            m2 = Matrix(input_matrix2)
+            message = f'{m1 * m2}'
+
+            self.server.send(message.encode(), addr)
+            count_requisitions -= 1
             running = False
 
         return running
@@ -90,10 +103,44 @@ class Connection(threading.Thread):
             pass
 
 
+def sortqueue(queue: list) -> list:
+    """ sortqueue """
+    queue.sort(key=lambda x: x[1])
+    return queue
+
+
 if __name__ == '__main__':
     s = ServerUDP()
-    s_aux = ClientTCP()
+
+    aux = False
+
+    count_requisitions = 0
+    queue = []
+
+    # Gambiarra para os testes
+    queue.append([ClientTCP(), 0])
+    # queue.append([ClientTCP(), 0])
+
     while True:
         bytes_socket_pair = s.recev()
-        new_thread = Connection(s, s_aux, bytes_socket_pair)
+        if count_requisitions == MAX_REQUISITIONS:
+            if bytes_socket_pair[0]:
+                print(bytes_socket_pair[0])
+                queue[0][0].send(bytes_socket_pair[0])
+                data_recv = queue[0][0].recv()
+                print('aqui')
+                data_recv = data_recv.decode()
+                data, time = data_recv.split('/')
+                bytes_socket_pair_result = (
+                    data.encode(), bytes_socket_pair[1])
+                queue[0][1] = float(time)
+                # queue.sort(key=lambda x: x[1])
+
+                aux = True
+        else:
+            count_requisitions += 1
+            bytes_socket_pair_result = bytes_socket_pair
+
+        new_thread = Connection(s, bytes_socket_pair_result, aux)
+        aux = False
         new_thread.start()

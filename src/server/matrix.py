@@ -1,4 +1,25 @@
 """ Matrix """
+import json
+
+
+def _treatment(message: str):
+    """ _treatment """
+    matrix_str = json.loads(message)
+    matrix_int = []
+    for row in matrix_str:
+        matrix_int.append(list(map(int, row)))
+    return matrix_int
+
+
+def treatment(message: bytes) -> tuple[list, list]:
+    """ treatment """
+
+    input_str = message.decode()
+    matrix_str1, matrix_str2 = input_str.split('*')
+
+    matrix_str1 = _treatment(matrix_str1)
+    matrix_str2 = _treatment(matrix_str2)
+    return (matrix_str1, matrix_str2)
 
 
 class Matrix(object):
@@ -46,8 +67,12 @@ class Matrix(object):
 
 
 if __name__ == "__main__":
+    message = f'{[[1, 2],[3, 4],[5, 6]]}*{[[1, 2],[3, 4],[5, 6]]}'
+    message = message.encode()
+    message = treatment(message)
+    print(message)
 
-    matriz1 = Matrix([[1, 2], [3, 4], [5, 6]])
-    matriz2 = Matrix([[1, 2, 3], [4, 5, 6]])
+    # matriz1 = Matrix([[1, 2], [3, 4], [5, 6]])
+    # matriz2 = Matrix([[1, 2, 3], [4, 5, 6]])
 
-    print(matriz1 * matriz2)
+    # print(matriz1 * matriz2)

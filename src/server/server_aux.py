@@ -1,6 +1,8 @@
 """ Server Aux """
 
 import socket
+import time
+from matrix import Matrix, treatment
 
 
 # Server Aux
@@ -12,6 +14,7 @@ SERVER_REQUEST_NO = 1
 
 
 with socket.socket(family=socket.AF_INET, type=socket.SOCK_STREAM) as s:
+    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     s.bind(INPUT_ADDR)
     s.listen(SERVER_REQUEST_NO)
     print("Waiting for connection...")
@@ -21,11 +24,18 @@ with socket.socket(family=socket.AF_INET, type=socket.SOCK_STREAM) as s:
         while True:
             data = conn.recv(BUFFERSIZE)
 
-
             print("Client:", addr,
                   " Message: ", data.decode())
-            if not data:
-                break
-            else:
+            if data:
                 # Processamento
-                conn.send(data)
+                # time.sleep(10)
+                start = time.time()
+
+                input_matrix1, input_matrix2 = treatment(data)
+                m1 = Matrix(input_matrix1)
+                m2 = Matrix(input_matrix2)
+                message = f'{m1 * m2}'
+                end = time.time()
+                message = f'{message}/{end - start}'
+
+                conn.send(message.encode())
