@@ -2,6 +2,7 @@
 
 import socket
 import time
+import os
 from matrix import Matrix, treatment
 
 
@@ -25,17 +26,20 @@ with socket.socket(family=socket.AF_INET, type=socket.SOCK_STREAM) as s:
             data = conn.recv(BUFFERSIZE)
 
             print("Client:", addr,
-                  " Message: ", data.decode())
+                " Message: ", data.decode())
             if data:
-                # Processamento
-                # time.sleep(10)
-                start = time.time()
+                pid = os.fork()         # Uso do subprocesso 
 
-                input_matrix1, input_matrix2 = treatment(data)
-                m1 = Matrix(input_matrix1)
-                m2 = Matrix(input_matrix2)
-                message = f'{m1 * m2}'
-                end = time.time()
-                message = f'{message}/{end - start}'
+                if pid == 0:
+                    # Processamento
+                    # time.sleep(10)
+                    start = time.time()
 
-                conn.send(message.encode())
+                    input_matrix1, input_matrix2 = treatment(data)
+                    m1 = Matrix(input_matrix1)
+                    m2 = Matrix(input_matrix2)
+                    message = f'{m1 * m2}'
+                    end = time.time()
+                    message = f'{message}/{end - start}'
+
+                    conn.send(message.encode())

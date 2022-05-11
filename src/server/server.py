@@ -46,10 +46,11 @@ class ServerUDP(object):
 class ClientTCP(object):
     """ CLientTCP """
 
-    def __init__(self) -> None:
+    def __init__(self, addr) -> None:
         self.conn = socket.socket(
             family=socket.AF_INET, type=socket.SOCK_STREAM)
-        self.conn.connect(INPUTAUX_ADDR)
+        self.addr = addr
+        self.conn.connect(self.addr)
 
     def recv(self) -> bytes:
         """ recv """
@@ -118,8 +119,9 @@ if __name__ == '__main__':
     queue = []
 
     # Gambiarra para os testes
-    queue.append([ClientTCP(), 0])
-    # queue.append([ClientTCP(), 0])
+    queue.append([ClientTCP(INPUTAUX_ADDR), 0])
+    queue.append([ClientTCP(INPUTAUX_ADDR), 20])
+    queue.append([ClientTCP(INPUTAUX_ADDR), 30])
 
     while True:
         bytes_socket_pair = s.recev()
@@ -134,7 +136,7 @@ if __name__ == '__main__':
                 bytes_socket_pair_result = (
                     data.encode(), bytes_socket_pair[1])
                 queue[0][1] = float(time)
-                # queue.sort(key=lambda x: x[1])
+                queue.sort(key=lambda x: x[1])
 
                 aux = True
         else:
