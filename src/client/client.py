@@ -25,7 +25,7 @@ class ClientUDP(object):
 class ReadFile(object):
     """ ReadFile """
 
-    def read(self, name: str) -> tuple[list, list]:
+    def read(self, name: str) -> str:
         """ read """
         matrix = []
         matrix2 = []
@@ -49,13 +49,13 @@ class ReadFile(object):
                     matrix2.append(text)
 
 
-        return (matrix, matrix2)
+        return f'{matrix}*{matrix2}'
 
 
 if __name__ == '__main__':
     f = ReadFile()
     matrices = f.read("input.txt")
     client = ClientUDP()
-    MESSAGE = f'{matrices}'
+    MESSAGE = matrices
     result = client.send(MESSAGE)
     print(result)
