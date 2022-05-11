@@ -7,7 +7,7 @@ from matrix import Matrix, treatment
 
 
 # Server Aux
-TCP_IP_ADDRESS = '127.0.0.1'
+TCP_IP_ADDRESS = socket.gethostname()
 TCP_PORT_NO = 6790
 INPUT_ADDR = (TCP_IP_ADDRESS, TCP_PORT_NO)
 BUFFERSIZE = 1024
