@@ -1,4 +1,4 @@
-""" Server Aux """
+""" Server Aux -> Servidor TCP """
 
 import socket
 import time
@@ -19,29 +19,34 @@ with socket.socket(family=socket.AF_INET, type=socket.SOCK_STREAM) as s:
     s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     s.bind(INPUT_ADDR)
     s.listen(SERVER_REQUEST_NO)
-    print("Waiting for connection...")
+    # print("Waiting for connection...")
     conn, addr = s.accept()
     with conn:
-        print(f"Connected by {addr}")
+        # print(f"Connected by {addr}")
         while True:
             data = conn.recv(BUFFERSIZE)
 
-            print("Client:", addr,
-                  " Message: ", data.decode())
             if data:
-                pid = os.fork()         # Uso do subprocesso
+                # Uso do subprocesso
+                pid = os.fork()
 
                 if pid == 0:
                     # Processamento
                     # time.sleep(10)
                     start = time.time()
 
+                    # Tratamento e calculo das matrizes
                     input_matrix1, input_matrix2 = treatment(data)
                     m1 = Matrix(input_matrix1)
                     m2 = Matrix(input_matrix2)
                     message = f'{m1 * m2}'
                     end = time.time()
 
-                    message = f'{message}/{end - start}'
+                    # Calculo da taxa de desempenho
+                    time_m = (end - start) * 1000
+                    processing_size = m1.row * m2.column
+                    performance_rate = time_m / processing_size
+
+                    message = f'{message}/{performance_rate}'
 
                     conn.send(message.encode())

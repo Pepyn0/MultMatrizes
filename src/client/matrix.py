@@ -1,4 +1,4 @@
-""" Matrix -> Matriz e calculos """
+""" Matrix """
 import json
 
 

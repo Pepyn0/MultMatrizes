@@ -27,7 +27,7 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfile.serveraux
-    # restart: always
+    restart: always
     ports:
       - "6790/tcp"
     networks:
@@ -39,7 +39,7 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfile.serveraux
-    # restart: always
+    restart: always
     ports:
       - "6790/tcp"
     networks:
@@ -51,7 +51,7 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfile.server
-    # restart: always
+    restart: always
 
     ports:
       - "6789:6789/udp"

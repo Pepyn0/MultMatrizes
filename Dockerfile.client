@@ -5,7 +5,9 @@ RUN python -m pip install -r requirements.txt
 
 WORKDIR /app
 COPY src/client/client.py .
+COPY src/client/input_test.py .
 COPY src/client/input.txt .
+COPY src/client/matrix.py .
 
 RUN adduser -u 5678 --disabled-password --gecos "" appuser && chown -R appuser /app
 USER appuser
