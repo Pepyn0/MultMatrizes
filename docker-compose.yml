@@ -1,0 +1,65 @@
+version: '3.4'
+
+networks:
+  dist-net:
+    driver: bridge
+    ipam:
+     config:
+       - subnet: 10.5.0.0/24
+        #  gateway: 10.5.0.1
+
+services:
+  serveraux1:
+    image: server-aux-app
+    build:
+      context: .
+      dockerfile: ./Dockerfile.serveraux
+    restart: always
+
+    ports:
+      - "6790/tcp"
+    networks:
+      dist-net:
+        ipv4_address: 10.5.0.3
+
+  serveraux2:
+    image: server-aux-app
+    build:
+      context: .
+      dockerfile: ./Dockerfile.serveraux
+    restart: always
+    ports:
+      - "6790/tcp"
+    networks:
+      dist-net:
+        ipv4_address: 10.5.0.4
+
+  serveraux3:
+    image: server-aux-app
+    build:
+      context: .
+      dockerfile: ./Dockerfile.serveraux
+    restart: always
+    ports:
+      - "6790/tcp"
+    networks:
+      dist-net:
+        ipv4_address: 10.5.0.5
+
+  server:
+    image: server-app
+    build:
+      context: .
+      dockerfile: ./Dockerfile.server
+    restart: always
+
+    ports:
+      - "6789:6789/udp"
+
+    networks:
+      dist-net:
+        ipv4_address: 10.5.0.2
+    depends_on:
+      - serveraux1
+      - serveraux2
+      - serveraux3
