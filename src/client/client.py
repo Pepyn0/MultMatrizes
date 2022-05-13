@@ -2,10 +2,12 @@
 
 import socket
 
-UDP_IP_ADDRESS = '192.168.1.2'
+BUFFERSIZE = 1024
+
+# server
+UDP_IP_ADDRESS = '10.5.0.2'
 UDP_PORT_NO = 6789
 SERVER_ADDR = (UDP_IP_ADDRESS, UDP_PORT_NO)
-BUFFERSIZE = 1024
 
 
 class ClientUDP(object):
@@ -21,6 +23,7 @@ class ClientUDP(object):
         self.client_socket_udp.sendto(message.encode(), SERVER_ADDR)
         message_from_server = self.client_socket_udp.recvfrom(BUFFERSIZE)
         return message_from_server[0].decode()
+
 
 class ReadFile(object):
     """ ReadFile """
@@ -48,14 +51,16 @@ class ReadFile(object):
                     text = list(map(int, text))
                     matrix2.append(text)
 
-
         return f'{matrix}*{matrix2}'
 
 
 if __name__ == '__main__':
     f = ReadFile()
+    i = 0
     matrices = f.read("input.txt")
     client = ClientUDP()
+    # while i < 30:
     MESSAGE = matrices
     result = client.send(MESSAGE)
     print(result)
+        # i += 1

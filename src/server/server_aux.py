@@ -6,12 +6,13 @@ import os
 from matrix import Matrix, treatment
 
 
+BUFFERSIZE = 1024
+SERVER_REQUEST_NO = 1
+
 # Server Aux
 TCP_IP_ADDRESS = socket.gethostname()
 TCP_PORT_NO = 6790
 INPUT_ADDR = (TCP_IP_ADDRESS, TCP_PORT_NO)
-BUFFERSIZE = 1024
-SERVER_REQUEST_NO = 1
 
 
 with socket.socket(family=socket.AF_INET, type=socket.SOCK_STREAM) as s:
@@ -26,9 +27,9 @@ with socket.socket(family=socket.AF_INET, type=socket.SOCK_STREAM) as s:
             data = conn.recv(BUFFERSIZE)
 
             print("Client:", addr,
-                " Message: ", data.decode())
+                  " Message: ", data.decode())
             if data:
-                pid = os.fork()         # Uso do subprocesso 
+                pid = os.fork()         # Uso do subprocesso
 
                 if pid == 0:
                     # Processamento
@@ -40,6 +41,7 @@ with socket.socket(family=socket.AF_INET, type=socket.SOCK_STREAM) as s:
                     m2 = Matrix(input_matrix2)
                     message = f'{m1 * m2}'
                     end = time.time()
+
                     message = f'{message}/{end - start}'
 
                     conn.send(message.encode())

@@ -8,17 +8,12 @@ from matrix import Matrix, treatment
 
 
 BUFFERSIZE = 1024
+
 # Server
 MAX_REQUISITIONS = 2
 UDP_IP_ADDRESS = socket.gethostname()
 UDP_PORT_NO = 6789
 INPUT_ADDR = (UDP_IP_ADDRESS, UDP_PORT_NO)
-SERVER_REQUEST_NO = 1
-
-# Server Aux
-TCP_IP_ADDRESS = '192.168.1.3'
-TCP_PORT_NO = 6790
-INPUTAUX_ADDR = (TCP_IP_ADDRESS, TCP_PORT_NO)
 
 
 class ServerUDP(object):
@@ -47,8 +42,8 @@ class ClientTCP(object):
     """ CLientTCP """
 
     def __init__(self, addr) -> None:
-        self.conn = socket.socket(
-            family=socket.AF_INET, type=socket.SOCK_STREAM)
+        self.conn = socket.socket(family=socket.AF_INET,
+                                  type=socket.SOCK_STREAM)
         self.addr = addr
         self.conn.connect(self.addr)
 
@@ -118,10 +113,9 @@ if __name__ == '__main__':
     count_requisitions = 0
     queue = []
 
-    # Gambiarra para os testes
-    queue.append([ClientTCP(INPUTAUX_ADDR), 0])
-    queue.append([ClientTCP(INPUTAUX_ADDR), 20])
-    queue.append([ClientTCP(INPUTAUX_ADDR), 30])
+    queue.append([ClientTCP(('10.5.0.3', 6790)), 0])
+    queue.append([ClientTCP(('10.5.0.4', 6790)), 0])
+    queue.append([ClientTCP(('10.5.0.5', 6790)), 0])
 
     while True:
         bytes_socket_pair = s.recev()
@@ -130,7 +124,6 @@ if __name__ == '__main__':
                 print(bytes_socket_pair[0])
                 queue[0][0].send(bytes_socket_pair[0])
                 data_recv = queue[0][0].recv()
-                print('aqui')
                 data_recv = data_recv.decode()
                 data, time = data_recv.split('/')
                 bytes_socket_pair_result = (
